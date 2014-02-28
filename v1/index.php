@@ -59,9 +59,7 @@ function authenticate(\Slim\Route $route) {
  */
 $app->post('/register', function() use ($app) {
             // check for required params
-    
             verifyRequiredParams(array('name', 'email', 'password'));
-
             $response = array();
 
             // reading post params
