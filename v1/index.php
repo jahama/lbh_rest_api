@@ -17,6 +17,7 @@ $user_id = NULL;
  */
 function authenticate(\Slim\Route $route) {
     // Getting request headers
+    
     $headers = apache_request_headers();
     $response = array();
     $app = \Slim\Slim::getInstance();
@@ -73,7 +74,7 @@ $app->post('/register', function() use ($app) {
             $db = new DbHandler();
             $res = $db->createUser($name, $email, $password);
 
-            if ($res == USER_CREATED_SUCCESSFULLY) {
+             if ($res == USER_CREATED_SUCCESSFULLY) {
                 $response["error"] = false;
                 $response["message"] = "You are successfully registered";
             } else if ($res == USER_CREATE_FAILED) {
@@ -128,52 +129,46 @@ $app->post('/login', function() use ($app) {
             echoRespnse(200, $response);
         });
 
-/**
- * User Login
- * url - /login
- * method - POST
- * params - email, password
- */
-$app->post('/login', function() use ($app) {
-            // check for required params
-            verifyRequiredParams(array('email', 'password'));
-
-            // reading post params
-            $email = $app->request()->post('email');
-            $password = $app->request()->post('password');
-            $response = array();
-
-            $db = new DbHandler();
-            // check for correct email and password
-            if ($db->checkLogin($email, $password)) {
-                // get the user by email
-                $user = $db->getUserByEmail($email);
-
-                if ($user != NULL) {
-                    $response["error"] = false;
-                    $response['name'] = $user['name'];
-                    $response['email'] = $user['email'];
-                    $response['apiKey'] = $user['api_key'];
-                    $response['createdAt'] = $user['created_at'];
-                } else {
-                    // unknown error occurred
-                    $response['error'] = true;
-                    $response['message'] = "An error occurred. Please try again";
-                }
-            } else {
-                // user credentials are wrong
-                $response['error'] = true;
-                $response['message'] = 'Login failed. Incorrect credentials';
-            }
-
-            echoRespnse(200, $response);
-        });
-
-
 /*
- * ------------------------ METHODS WITH AUTHENTICATION ------------------------/*
+ * ------ METHODS WITH AUTHENTICATION (Including API key in the request)-------/*
  * ------------------------   Handling the API calls    ------------------------
  */
+
+/**
+ * -------------------------------  EQUIPOS    ---------------------------------
+ */
+/**
+ * Creating new Team in db
+ * method POST
+ * params - nombre
+ * url - /equipos/
+ */
+$app->post('/equipos', 'authenticate', function() use ($app) {
+            // check for required params 
+          
+            verifyRequiredParams(array('nombre'));
+
+            $response = array();
+            $equipo = $app->request->post('nombre');
+
+
+            //global $user_id;
+            $db = new DbHandler();
+
+            // creating new task
+            $equipo_id = $db->createEquipo($equipo);
+
+            if ($equipo_id != NULL) {
+                $response["error"] = false;
+                $response["message"] = "Task created successfully";
+                $response["equipo_id"] = $equipo_id;
+                echoRespnse(201, $response);
+            } else {
+                $response["error"] = true;
+                $response["message"] = "Failed to create Team. Please try again";
+                echoRespnse(200, $response);
+            }            
+        });
 
 
 
