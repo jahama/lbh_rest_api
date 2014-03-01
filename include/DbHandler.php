@@ -228,6 +228,28 @@ class DbHandler {
         }
     }
 
+    /**
+     * Busca todos los equipos
+     * @param 
+     */
+    public function getAllEquipos() {
+        $stmt = $this->conn->prepare("SELECT nombre FROM equipos");
+        $stmt->execute();
+
+       
+
+        /* vincular variables a la sentencia preparada */
+         $stmt->bind_result($nombre);
+
+          while ($fila = $stmt->fetch()) {
+                $equipos[]=$nombre;
+            }
+
+        $stmt->close();
+        return $equipos;
+    }
+
+
     /* ------------- `Jugadores table method ------------------ */
 
 

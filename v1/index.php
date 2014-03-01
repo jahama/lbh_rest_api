@@ -138,6 +138,41 @@ $app->post('/login', function() use ($app) {
  * -------------------------------  EQUIPOS    ---------------------------------
  */
 /**
+ * Lista todos los equipos
+ * method GET
+ * url /equipos          
+ */
+$app->get('/equipos', 'authenticate', function() {
+           // global $user_id;
+            $response = array();
+            $db = new DbHandler();
+
+            // Busca todos los equipos
+            $result = $db->getAllEquipos();
+
+           // var_dump(count($result));
+
+
+            $response["error"] = false;
+            $response["equipos"] = array();
+
+            // looping through result and preparing tasks array
+          // while ($task = $result->fetch_assoc()) {
+            for ($i=0;$i<count($result);$i++){
+
+                
+                $tmp = array();
+                //$tmp["id"] = $task["id"];
+                $tmp["nombre"] = $result[0];
+                array_push($response["equipos"], $tmp);
+                
+            }
+
+            echoRespnse(200, $response);
+        });
+
+
+/**
  * Creating new Team in db
  * method POST
  * params - nombre
