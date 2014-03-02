@@ -259,7 +259,7 @@ class DbHandler {
      */
     public function createJugador($equipo_id, $nombre,$apellidos,$puesto) {
         
-        $stmt = $this->conn->prepare("INSERT INTO jugadores(equipo_id, nombre,apellidos,puesto) VALUES(1,?,?,?)");
+        $stmt = $this->conn->prepare("INSERT INTO jugadores(equipo_id, nombre,apellidos,puesto) VALUES(?,?,?,?)");
        // $stmt->bind_param("s", $equipo_id);
         $stmt->bind_param("sss", $nombre, $apellidos, $puesto);
         $result = $stmt->execute();
@@ -274,6 +274,31 @@ class DbHandler {
            
         } else {
             // task failed to create
+            return NULL;
+        }
+    }
+
+    /**
+     * Busca un jugador
+     * @param String $jugador_id
+     */
+    public function getJugador($jugador_id) {
+        $stmt = $this->conn->prepare("SELECT id, equipo_id, nombre, apellidos, puesto from jugadores WHERE id = ? ");
+        $stmt->bind_param("i", $jugador_id);
+        if ($stmt->execute()) {
+            $res = array();
+            $stmt->bind_result($id, $equipo_id, $nombre, $apellidos, $puesto);
+            // TODO
+            // $task = $stmt->get_result()->fetch_assoc();
+            $stmt->fetch();
+            $res["id"] = $id;
+            $res["equipo_id"] = $equipo_id;
+            $res["nombre"] = $nombre;
+            $res["apellidos"] = $apellidos;
+            $res["puesto"] = $puesto;
+            $stmt->close();
+            return $res;
+        } else {
             return NULL;
         }
     }

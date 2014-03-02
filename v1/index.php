@@ -211,7 +211,6 @@ $app->post('/equipos', 'authenticate', function() use ($app) {
  * -------------------------------  JUGADORES    ---------------------------------
  */
 
-
 /**
  * Creating new Jugador in db
  * method POST
@@ -249,7 +248,34 @@ $app->post('/jugadores', 'authenticate', function() use ($app) {
             }            
         });
 
+/**
+ * Listing single jugador 
+ * method GET
+ * url /jugadores/:id
+ * Will return 404 if the Jugador doesn't belongs to Equipo
+ */
+$app->get('/jugadores/:id', 'authenticate', function($jugador_id) {
+           
+            $response = array();
+            $db = new DbHandler();
 
+            // fetch task
+            $result = $db->getJugador($jugador_id);
+
+            if ($result != NULL) {
+                $response["error"] = false;
+                $response["id"] = $result["id"];
+                $response["equip_id"] = $result["equipo_id"];
+                $response["nombre"] = $result["nombre"];
+                $response["apellidos"] = $result["apellidos"];
+                $response["puesto"] = $result["puesto"];
+                echoRespnse(200, $response);
+            } else {
+                $response["error"] = true;
+                $response["message"] = "The requested resource doesn't exists";
+                echoRespnse(404, $response);
+            }
+        });
 
 /**
  * -------------------------------               ---------------------------------
