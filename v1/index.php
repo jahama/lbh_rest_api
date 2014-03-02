@@ -278,6 +278,39 @@ $app->get('/jugadores/:id', 'authenticate', function($jugador_id) {
         });
 
 /**
+ * Updating existing Jugador
+ * method PUT
+ * params  equipo_id, nombre, apellidos, puesto
+ * url - /jugadores/:id
+ */
+$app->put('/jugadores/:id', 'authenticate', function($jugador_id) use($app) {
+            // check for required params
+            verifyRequiredParams(array('nombre', 'apellidos', 'puesto'));
+                      
+             // reading post params
+            //$equipo_id = $app->request->post('equipo_id');
+            $nombre = $app->request->post('nombre');
+            $apellidos = $app->request->post('apellidos');
+            $puesto = $app->request->post('puesto');
+
+            $db = new DbHandler();
+            $response = array();
+
+            // updating Jugador
+            $result = $db->updateJugador($jugador_id,$nombre, $apellidos, $puesto);
+            if ($result) {
+                // task updated successfully
+                $response["error"] = false;
+                $response["message"] = "Task updated successfully";
+            } else {
+                // task failed to update
+                $response["error"] = true;
+                $response["message"] = "Task failed to update. Please try again!";
+            }
+            echoRespnse(200, $response);
+        });
+
+/**
  * -------------------------------               ---------------------------------
  *
  */

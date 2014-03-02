@@ -261,7 +261,7 @@ class DbHandler {
         
         $stmt = $this->conn->prepare("INSERT INTO jugadores(equipo_id, nombre,apellidos,puesto) VALUES(?,?,?,?)");
        // $stmt->bind_param("s", $equipo_id);
-        $stmt->bind_param("sss", $nombre, $apellidos, $puesto);
+        $stmt->bind_param("isss",$equipo_id, $nombre, $apellidos, $puesto);
         $result = $stmt->execute();
         $stmt->close();
 
@@ -302,6 +302,23 @@ class DbHandler {
             return NULL;
         }
     }
+
+     /**
+     * Updating jugador
+     * @param Id     $equipo_id 
+     * @param String $nombre
+     * @param String $apellidos
+     * @param String $puesto
+     */
+    public function updateJugador($jugador_id,$nombre, $apellidos, $puesto) {
+        $stmt = $this->conn->prepare("UPDATE jugadores set nombre = ?, apellidos = ? , puesto = ? WHERE id = ?");
+        $stmt->bind_param("sssi", $nombre, $apellidos, $puesto,$jugador_id);
+        $stmt->execute();
+        $num_affected_rows = $stmt->affected_rows;
+        $stmt->close();
+        return $num_affected_rows > 0;
+    }
+
 
 }
 
