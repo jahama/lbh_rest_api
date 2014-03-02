@@ -150,13 +150,9 @@ $app->get('/equipos', 'authenticate', function() {
             // Busca todos los equipos
             $result = $db->getAllEquipos();
 
-           // var_dump(count($result));
-
-
             $response["error"] = false;
             $response["equipos"] = array();
-
-            // looping through result and preparing tasks array
+           
           // while ($task = $result->fetch_assoc()) {
             for ($i=0;$i<count($result);$i++){
 
@@ -209,6 +205,55 @@ $app->post('/equipos', 'authenticate', function() use ($app) {
 
 /**
  * -------------------------------               ---------------------------------
+ */
+
+/**
+ * -------------------------------  JUGADORES    ---------------------------------
+ */
+
+
+/**
+ * Creating new Jugador in db
+ * method POST
+ * params - equipo_id, nombre, apellidos, puesto
+ * url - /jugadores/
+ */
+$app->post('/jugadores', 'authenticate', function() use ($app) {
+            // check for required params 
+          
+            verifyRequiredParams(array('equipo_id', 'nombre', 'apellidos', 'puesto'));
+
+            $response = array();
+            // reading post params
+            $equipo_id = $app->request->post('equipo_id');
+            $nombre = $app->request->post('nombre');
+            $apellidos = $app->request->post('apellidos');
+            $puesto = $app->request->post('puesto');
+           
+           
+            //global $user_id;
+            $db = new DbHandler();
+
+            // creating new jugador
+            $jugador_id = $db->createJugador($equipo_id, $nombre,$apellidos,$puesto);
+
+            if ($equipo_id != NULL) {
+                $response["error"] = false;
+                $response["message"] = "Jugador created successfully";
+                $response["jugador_id"] = $jugador_id;
+                echoRespnse(201, $response);
+            } else {
+                $response["error"] = true;
+                $response["message"] = "Failed to create Jugador. Please try again";
+                echoRespnse(200, $response);
+            }            
+        });
+
+
+
+/**
+ * -------------------------------               ---------------------------------
+ *
  */
 
 /**

@@ -252,6 +252,31 @@ class DbHandler {
 
     /* ------------- `Jugadores table method ------------------ */
 
+    /**
+     * Creando un nuevo jugador
+     * @param String $user_id user id to whom task belongs to
+     * @param String $task task text
+     */
+    public function createJugador($equipo_id, $nombre,$apellidos,$puesto) {
+        
+        $stmt = $this->conn->prepare("INSERT INTO jugadores(equipo_id, nombre,apellidos,puesto) VALUES(1,?,?,?)");
+       // $stmt->bind_param("s", $equipo_id);
+        $stmt->bind_param("sss", $nombre, $apellidos, $puesto);
+        $result = $stmt->execute();
+        $stmt->close();
+
+        if ($result) {
+            // equipo row created
+            // now assign the task to user
+            $new_jugador_id = $this->conn->insert_id;
+           
+                return $new_jugador_id;
+           
+        } else {
+            // task failed to create
+            return NULL;
+        }
+    }
 
 }
 
