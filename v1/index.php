@@ -6,7 +6,8 @@ require '.././libs/Slim/Slim.php';
 
 \Slim\Slim::registerAutoloader();
 
-$app = new \Slim\Slim();
+$app = new \Slim\Slim(array('debug'=> true));
+
 
 // User id from db - Global Variable
 $user_id = NULL;
@@ -212,14 +213,46 @@ $app->post('/equipos', 'authenticate', function() use ($app) {
  */
 
 /**
+ * Lista todos los jugadores de un equipo
+ * method GET
+ * params - equipo_id
+ * url /equipos/:id          
+ */
+$app->get('/equipos/:id',  function($equipo_id) {
+          
+            // check for required params           
+           // verifyRequiredParams(array('equipo_id'));
+            $response = array();
+             // reading post params
+           // $equipo_id = $app->request->post('equipo_id');
+            $db = new DbHandler();
+
+            // Busca todos los equipos
+            $result = $db->getAllJugadores($equipo_id);               
+            $response["error"] = false;
+            $response["equipos"] = array();
+           
+          // while ($task = $result->fetch_assoc()) {
+            for ($i=0;$i<count($result);$i++){ 
+                 $equipo = json_encode($result[$i]);
+              
+                 array_push($response["equipos"], $equipo);
+            }
+            echoRespnse(200, $response);
+        });
+
+
+
+
+/**
  * Creating new Jugador in db
  * method POST
  * params - equipo_id, nombre, apellidos, puesto
  * url - /jugadores/
  */
 $app->post('/jugadores', 'authenticate', function() use ($app) {
-            // check for required params 
-          
+            
+            // check for required params           
             verifyRequiredParams(array('equipo_id', 'nombre', 'apellidos', 'puesto'));
 
             $response = array();
@@ -366,6 +399,7 @@ function validateEmail($email) {
  * @param Int $response Json response
  */
 function echoRespnse($status_code, $response) {
+    
     $app = \Slim\Slim::getInstance();
     // Http response code
     $app->status($status_code);

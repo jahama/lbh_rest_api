@@ -253,6 +253,39 @@ class DbHandler {
     /* ------------- `Jugadores table method ------------------ */
 
     /**
+     * Busca todos los jugadores de un equipo
+     * @param Integer $equipo_id 
+     */
+    public function getAllJugadores($equipo_id) {
+        //$stmt = $this->conn->prepare("SELECT id,nombre FROM jugadores WHERE equipo_id = ?");
+        $mysqli = new mysqli("localhost", "root", "vikiwi3", "lbh_rest_api");
+        $query = "SELECT * FROM jugadores WHERE equipo_id = " . $equipo_id;
+        if ($result = $mysqli->query($query)) {
+
+            /* fetch associative array */
+            $equipos=array();
+            while ($row = $result->fetch_assoc()) {
+                $equipos[]=$row;
+            }
+
+            /* free result set */
+          $equiposJSON = json_encode($equipos);
+/*
+            echo "<pre>*************";
+           var_dump($equipos);
+            echo "</pre>";
+            */
+            $result->free();
+        }
+
+      
+       // var_dump($equiposJSON);
+        //$result->close();
+        return $equipos;
+    }
+
+
+    /**
      * Creando un nuevo jugador
      * @param String $user_id user id to whom task belongs to
      * @param String $task task text
